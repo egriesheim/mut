@@ -9,7 +9,7 @@ namespace WebApplication8.Data
     public class MutContext : ApplicationDbContext
     {
         public static string ConnectionString =
-            "Server=localhost\\SQLEXPRESS;Database=MUT;Trusted_Connection=True;MultipleActiveResultSets=true";
+            "Server=tcp:mutdb.database.windows.net,1433;Initial Catalog=MUT;Persist Security Info=False;User ID=mutadmin;Password=Dunder#7!?;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
 
         public MutContext()

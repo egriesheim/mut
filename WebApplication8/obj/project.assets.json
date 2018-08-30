@@ -13340,23 +13340,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\egriesheim\\.nuget\\packages\\": {},
+    "C:\\Users\\Elliott Griesheim\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\egriesheim\\source\\repos\\WebApplication8\\WebApplication8\\WebApplication8.csproj",
+      "projectUniqueName": "C:\\Users\\Elliott Griesheim\\repos\\mut\\WebApplication8\\WebApplication8.csproj",
       "projectName": "WebApplication8",
-      "projectPath": "C:\\Users\\egriesheim\\source\\repos\\WebApplication8\\WebApplication8\\WebApplication8.csproj",
-      "packagesPath": "C:\\Users\\egriesheim\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\egriesheim\\source\\repos\\WebApplication8\\WebApplication8\\obj\\",
+      "projectPath": "C:\\Users\\Elliott Griesheim\\repos\\mut\\WebApplication8\\WebApplication8.csproj",
+      "packagesPath": "C:\\Users\\Elliott Griesheim\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Elliott Griesheim\\repos\\mut\\WebApplication8\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\egriesheim\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Elliott Griesheim\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

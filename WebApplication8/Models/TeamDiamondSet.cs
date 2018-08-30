@@ -36,7 +36,7 @@ namespace WebApplication8.Models
         {
             List<Diamonds> players = new List<Diamonds>();
 
-            players = db.Diamonds.Where(u => u.team == team || team.Contains(u.column_10)).ToList();
+            players = db.Diamonds.Where(u => u.team == team || (team.Contains(u.column_10) && u.column_10 != "")).ToList();
 
             return players;
         }

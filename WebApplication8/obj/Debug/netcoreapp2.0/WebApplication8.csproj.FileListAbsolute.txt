@@ -10,3 +10,15 @@ c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netco
 c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.dll
 c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.pdb
 C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.deps.json
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.runtimeconfig.json
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.runtimeconfig.dev.json
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.dll
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.pdb
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.csprojAssemblyReference.cache
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.csproj.CoreCompileInputs.cache
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.AssemblyInfoInputs.cache
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.AssemblyInfo.cs
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.dll
+C:\Users\Elliott Griesheim\repos\mut\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.pdb

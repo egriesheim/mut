@@ -38,6 +38,13 @@ namespace WebApplication8.Controllers
         }
 
         [Authorize]
+        public IActionResult Modify(string team)
+        {
+            var players = db.Diamonds.Where(u => u.team == team || (team.Contains(u.column_10) && u.column_10 != "")).ToList();
+            return View(players);
+        }
+
+        [Authorize]
         public IActionResult GeneratePlayerList()
         {
             while (!lastPage)

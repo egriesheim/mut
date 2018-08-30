@@ -1,0 +1,74 @@
+﻿@model IEnumerable<WebApplication8.Data.Diamonds>
+
+@{
+    ViewData["Title"] = "Modify";
+}
+
+<h2>Modify</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.firstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.lastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.overall)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.position)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.median)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.programName)
+            </th>
+            <th>
+                Owned
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.firstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.overall)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.position)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.median)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.programName)
+                </td>
+                <td>
+                    <input type="checkbox" data-toggle="toggle" class="toggles" id="@item.id" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+  $(function() {
+    $('.toggle').bootstrapToggle({
+      on: 'Yes',
+      off: 'No'
+    });
+  })
+    </script>
+}

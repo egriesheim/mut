@@ -1,0 +1,68 @@
+﻿@model IEnumerable<WebApplication8.Models.TeamDiamondSet>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.team)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.cost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.coinsBack)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.diamondPlayerCost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.profit)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.team)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.cost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.coinsBack)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.diamondPlayerCost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.profit)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section scripts{ 
+    <script>
+        $(document).ready(function() {
+            $('.table').DataTable();
+        });
+    </script>
+}

@@ -1,0 +1,12 @@
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.deps.json
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.runtimeconfig.json
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.runtimeconfig.dev.json
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.dll
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Debug\netcoreapp2.0\WebApplication8.pdb
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.csprojAssemblyReference.cache
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.csproj.CoreCompileInputs.cache
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.AssemblyInfoInputs.cache
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.AssemblyInfo.cs
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.dll
+c:\users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\WebApplication8.pdb
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs

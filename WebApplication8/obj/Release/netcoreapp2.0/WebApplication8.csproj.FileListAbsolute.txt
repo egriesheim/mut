@@ -1,0 +1,12 @@
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Release\netcoreapp2.0\WebApplication8.deps.json
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Release\netcoreapp2.0\WebApplication8.runtimeconfig.json
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Release\netcoreapp2.0\WebApplication8.runtimeconfig.dev.json
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Release\netcoreapp2.0\WebApplication8.dll
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\bin\Release\netcoreapp2.0\WebApplication8.pdb
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\WebApplication8.csproj.CoreCompileInputs.cache
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\WebApplication8.AssemblyInfoInputs.cache
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\WebApplication8.AssemblyInfo.cs
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\WebApplication8.dll
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\WebApplication8.pdb
+C:\Users\egriesheim\source\repos\WebApplication8\WebApplication8\obj\Release\netcoreapp2.0\WebApplication8.csprojAssemblyReference.cache

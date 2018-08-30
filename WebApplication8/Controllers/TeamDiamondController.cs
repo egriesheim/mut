@@ -61,9 +61,14 @@ namespace WebApplication8.Controllers
             return View(players);
         }
 
-        [Authorize]
+
         public IActionResult GeneratePlayerList()
         {
+            var allLinks = db.Links.ToList();
+            db.Links.RemoveRange(allLinks);
+
+            db.SaveChanges();
+
             while (!lastPage)
             {
                 ParseURL(url + pageCount);
@@ -75,9 +80,14 @@ namespace WebApplication8.Controllers
             return View("Index");
         }
 
-        [Authorize]
+
         public IActionResult GetPlayers()
         {
+            var allPlayers = db.Players.ToList();
+            db.Players.RemoveRange(allPlayers);
+
+            db.SaveChanges();
+
             foreach (var player in db.Links.ToList())
             {
                 GetPlayerData(player.url);

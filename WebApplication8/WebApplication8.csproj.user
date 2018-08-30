@@ -7,5 +7,6 @@
     <WebStackScaffolding_IsReferencingScriptLibrariesSelected>True</WebStackScaffolding_IsReferencingScriptLibrariesSelected>
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>WebApplication8.Data.MutContext</WebStackScaffolding_DbContextTypeFullName>
+    <NameOfLastUsedPublishProfile>teamdiamond - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

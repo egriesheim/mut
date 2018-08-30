@@ -31,6 +31,7 @@ namespace WebApplication8.Data
         public virtual DbSet<Players> Players { get; set; }
         public virtual DbSet<Diamonds> Diamonds { get; set; }
         public virtual DbSet<CoinsBack> CoinsBack { get; set; }
+        public virtual DbSet<Owned> Owned { get; set; }
     }
 
 
@@ -72,5 +73,13 @@ namespace WebApplication8.Data
         public int id { get; set; }
         public string Team { get; set; }
         public int Coins { get; set; }
+    }
+
+    public class Owned
+    {
+        public int id { get; set; }
+        public string userId { get; set; }
+        public string team { get; set; }
+        public string owned { get; set; }
     }
 }

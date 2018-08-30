@@ -1,11 +1,12 @@
 ﻿@model IEnumerable<WebApplication8.Data.Diamonds>
-
 @{
     ViewData["Title"] = "Modify";
 }
 
-<h2>Modify</h2>
-
+<h2>@ViewBag.Team</h2>
+<a href="/TeamDiamond">Back To Sets</a><br/><br/>
+<input type="hidden" class="hiddenId" value="@ViewBag.id" />
+<button type="submit" onclick="UpdateOwned()" class="btn btn-primary">Update</button><br/><br/>
 <table class="table">
     <thead>
         <tr>
@@ -55,7 +56,7 @@
                     @Html.DisplayFor(modelItem => item.programName)
                 </td>
                 <td>
-                    <input type="checkbox" data-toggle="toggle" class="toggles" id="@item.id" />
+                    <input type="checkbox" name="owned" data-toggle="toggle" data-on="Yes" data-off="No" id="@item.id" />
                 </td>
             </tr>
         }
@@ -64,11 +65,58 @@
 
 @section scripts{
     <script>
-  $(function() {
-    $('.toggle').bootstrapToggle({
-      on: 'Yes',
-      off: 'No'
-    });
-  })
+        // add function for on page load for already owned items
+        $(document).ready(function() {
+            var owned = "@ViewBag.owned";
+            var ownedArray = owned.split(',');
+            console.log(ownedArray);
+            $.each(ownedArray,
+                function (key, value) {
+                    console.log(key + " " + value);
+                    $("#" + value).prop('checked', true).change();
+                });
+        })
+
+        function UpdateOwned() {
+            var team = "@ViewBag.Team"
+
+            var id = $(".hiddenId").val();
+            var url;
+            
+            console.log(team);
+            var owned = [];
+            $("input[type='checkbox']").each(function () {
+                if ($(this).prop("checked")) {
+                    owned.push($(this).attr("id"));
+                }
+            });
+
+            var data = {};
+
+            data['owned'] = owned;
+
+            if (id != '') {
+                data['id'] = id;
+                url = "/TeamDiamond/UpdateOwned";
+            } else {
+                data['team'] = team;
+                url = "/TeamDiamond/AddOwned";
+            }
+            console.log(JSON.stringify(data));
+            $.ajax({
+                type: "POST",
+                url: url,
+                content: "application/json; charset=utf-8",
+                dataType: "json",
+                data: data,
+                success: function (d) {
+                    window.location.href = "/TeamDiamond";
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // TODO: Show error
+                }
+            });
+
+        }
     </script>
 }

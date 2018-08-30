@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication8.Data;
 using WebApplication8.Models;
 
@@ -21,15 +24,16 @@ namespace WebApplication8.Controllers
         static List<Link> urlList = new List<Link>();
         // GET: /<controller>/
 
-        [Authorize]
+        
         public IActionResult Index()
         {
             List<TeamDiamondSet> teamDiamondSet = new List<TeamDiamondSet>();
             var teams = db.Diamonds.Select(u => u.team).Distinct();
-
+            var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             foreach (var team in teams)
             {
-                var tds = new TeamDiamondSet(team);
+                if (team == "Free Agents") continue;
+                var tds = new TeamDiamondSet(team, uId);
                 teamDiamondSet.Add(tds);
             }
 
@@ -40,6 +44,19 @@ namespace WebApplication8.Controllers
         [Authorize]
         public IActionResult Modify(string team)
         {
+            var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var owned = db.Owned.FirstOrDefault(u => u.team == team && u.userId == uId);
+            if (owned != null)
+            {
+                ViewBag.id = owned.id;
+                ViewBag.owned = owned.owned;
+            }
+            else
+            {
+                ViewBag.id = null;
+                ViewBag.owned = null;
+            }
+            ViewBag.Team = team;
             var players = db.Diamonds.Where(u => u.team == team || (team.Contains(u.column_10) && u.column_10 != "")).ToList();
             return View(players);
         }
@@ -90,6 +107,58 @@ namespace WebApplication8.Controllers
             if (doc.DocumentNode.SelectSingleNode("//*[@id='content']/section/div/div/div[2]/div/ul/li[8]/a") == null)
             {
                 lastPage = true;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult AddOwned(string Team, string Owned)
+        {
+            var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Owned o = new Owned
+            {
+                userId = uId,
+                team = Team,
+                owned = Owned
+            };
+
+            db.Owned.Add(o);
+
+            try
+            {
+                db.SaveChanges();
+                return Json("'Success':'true'");
+            }
+            catch (Exception e)
+            {
+                return Json("'Success':'false'");
+            }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateOwned(string[] owned, string id)
+        {
+
+            Owned o = db.Owned.Find(Convert.ToInt32(id));
+
+            o.owned = String.Join(",", owned);
+
+            if (o.owned == "")
+            {
+                db.Remove(o);
+                db.SaveChanges();
+                return Json("'Success':'true'");
+            }
+
+            db.Entry(o).State = EntityState.Modified;
+
+            try
+            {
+                db.SaveChanges();
+                return Json("'Success':'true'");
+            }
+            catch (Exception e)
+            {
+                return Json("'Success':'false'");
             }
         }
 

@@ -12,7 +12,7 @@ namespace WebApplication8.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "TeamDiamond");
         }
 
         public IActionResult About()

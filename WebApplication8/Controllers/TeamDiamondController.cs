@@ -61,8 +61,17 @@ namespace WebApplication8.Controllers
             return View(players);
         }
 
+        public IActionResult UpdatePlayerData()
+        {
+            GeneratePlayerList();
 
-        public IActionResult GeneratePlayerList()
+            GetPlayers();
+
+            return View(null);
+        }
+
+
+        public void GeneratePlayerList()
         {
             var allLinks = db.Links.ToList();
             db.Links.RemoveRange(allLinks);
@@ -76,12 +85,10 @@ namespace WebApplication8.Controllers
 
             db.Links.AddRange(urlList);
             db.SaveChanges();
-
-            return View("Index");
         }
 
 
-        public IActionResult GetPlayers()
+        public void GetPlayers()
         {
             var allPlayers = db.Players.ToList();
             db.Players.RemoveRange(allPlayers);
@@ -92,8 +99,6 @@ namespace WebApplication8.Controllers
             {
                 GetPlayerData(player.url);
             }
-
-            return View("Index");
         }
 
         [Authorize]
@@ -121,15 +126,15 @@ namespace WebApplication8.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddOwned(string Team, string Owned)
+        public JsonResult AddOwned(string Team, string[] Owned)
         {
             var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             Owned o = new Owned
             {
                 userId = uId,
                 team = Team,
-                owned = Owned
-            };
+                owned = String.Join(",", Owned)
+        };
 
             db.Owned.Add(o);
 
@@ -202,6 +207,17 @@ namespace WebApplication8.Controllers
 
                 db.Players.Add(player);
                 db.SaveChanges();
+
+                var diamond = db.Diamonds.FirstOrDefault(u =>
+                    u.firstName == firstName && u.lastName == lastName && u.programName == programName);
+                if (diamond != null)
+                {
+                    diamond.median = player.median;
+                    db.Entry(diamond).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
+
             }
             catch
             {

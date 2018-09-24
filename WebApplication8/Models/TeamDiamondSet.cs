@@ -42,7 +42,8 @@ namespace WebApplication8.Models
             diamondPlayerCost = db.Players
                 .Where(u => u.team == team && u.programName == "Team Diamonds" && u.lastName != "Lott")
                 .Select(u => u.median).FirstOrDefault();
-            profit = coinsBack + diamondPlayerCost - cost;
+            var diamondProfit = diamondPlayerCost * .9;
+            profit = coinsBack + Convert.ToInt32(diamondProfit) - cost;
             if (owned != null)
             {
                 ownedCount = owned.Count();

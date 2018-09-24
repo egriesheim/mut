@@ -129,24 +129,35 @@ namespace WebApplication8.Controllers
         public JsonResult AddOwned(string Team, string[] Owned)
         {
             var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Owned o = new Owned
+            if (db.Owned.Any(u => u.userId == uId && u.team == Team))
             {
-                userId = uId,
-                team = Team,
-                owned = String.Join(",", Owned)
-        };
+                var owned =  db.Owned.FirstOrDefault(u => u.userId == uId && u.team == Team);
+                UpdateOwned(Owned, owned.id.ToString());
 
-            db.Owned.Add(o);
-
-            try
-            {
-                db.SaveChanges();
                 return Json("'Success':'true'");
             }
-            catch (Exception e)
+            else
             {
-                return Json("'Success':'false'");
+                Owned o = new Owned
+                {
+                    userId = uId,
+                    team = Team,
+                    owned = String.Join(",", Owned)
+                };
+
+                db.Owned.Add(o);
+
+                try
+                {
+                    db.SaveChanges();
+                    return Json("'Success':'true'");
+                }
+                catch (Exception e)
+                {
+                    return Json("'Success':'false'");
+                }
             }
+            
         }
 
         [HttpPost]

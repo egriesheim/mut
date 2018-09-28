@@ -32,6 +32,7 @@ namespace WebApplication8.Data
         public virtual DbSet<Diamonds> Diamonds { get; set; }
         public virtual DbSet<CoinsBack> CoinsBack { get; set; }
         public virtual DbSet<Owned> Owned { get; set; }
+        public virtual DbSet<FutPlayers> FutPlayers { get; set; }
     }
 
 
@@ -81,5 +82,49 @@ namespace WebApplication8.Data
         public string userId { get; set; }
         public string team { get; set; }
         public string owned { get; set; }
+    }
+
+    public class FutPlayers
+    {
+        public int id { get; set; }
+        public string href { get; set; }
+        public string name { get; set; }
+        public int overall { get; set; }
+        public string position { get; set; }
+        public string club { get; set; }
+        public string nation { get; set; }
+        public string league { get; set; }
+        public int acceleration { get; set; }
+        public int sprintSpeed { get; set; }
+        public int positioning { get; set; }
+        public int finishing { get; set; }
+        public int shotPower { get; set; }
+        public int longShots { get; set; }
+        public int volleys { get; set; }
+        public int penalties { get; set; }
+        public int vision { get; set; }
+        public int crossing { get; set; }
+        public int freekickaccuracy { get; set; }
+        public int shortPassing { get; set; }
+        public int longPassing { get; set; }
+        public int curve { get; set; }
+        public int agility { get; set; }
+        public int balance { get; set; }
+        public int reactions { get; set; }
+        public int ballControl { get; set; }
+        public int dribbling { get; set; }
+        public int composure { get; set; }
+        public int interceptions { get; set; }
+        public int headingAccuracy { get; set; }
+        public int marking { get; set; }
+        public int standingTackle { get; set; }
+        public int slidingTackle { get; set; }
+        public int jumping { get; set; }
+        public int stamina { get; set; }
+        public int strength { get; set; }
+        public int aggression { get; set; }
+        public string ps4cost { get; set; }
+        public string xboxcost { get; set; }
+        public string pccost { get; set; }
     }
 }

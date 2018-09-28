@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication8.Data;
+using WebApplication8.Models;
 
 namespace WebApplication8.Controllers
 {
@@ -21,7 +22,13 @@ namespace WebApplication8.Controllers
         public IActionResult Index()
         {
             //GetLinks();
-            GetPlayerData();
+            //GetPlayerData();
+            
+            //CalculateStrikerQuickTiers();
+            //CalculateStrikerStrongTiers();
+            //CalculateStrikerSkilledTiers();
+            CalculateWingerQuickTiers();
+
             return View();
         }
 
@@ -165,6 +172,160 @@ namespace WebApplication8.Controllers
             {
                 Console.WriteLine(e);
             }
+        }
+
+        public void CalculateTier(List<StatPair> statPairs)
+        {
+            var standardDeviation = CalculateStandardDeviation(statPairs);
+            var avg = statPairs.Select(u => u.statTotal).Average();
+
+            var tiera = avg + 3 * standardDeviation;
+            var tierb = avg + 2 * standardDeviation;
+            var tierc = avg + standardDeviation;
+            var tierd = avg - standardDeviation;
+            var tiere = avg - 2 * standardDeviation;
+            var tierf = avg - 3 * standardDeviation;
+
+            foreach (var statPair in statPairs)
+            {
+                if (statPair.statTotal > tiera)
+                {
+                    statPair.tier = "A";
+                }
+                else if (statPair.statTotal > tierb)
+                {
+                    statPair.tier = "B";
+                }
+                else if (statPair.statTotal > tierc)
+                {
+                    statPair.tier = "C";
+                }
+                else if (statPair.statTotal > tierd)
+                {
+                    statPair.tier = "D";
+                }
+                else if (statPair.statTotal > tiere)
+                {
+                    statPair.tier = "E";
+                }
+                else if (statPair.statTotal > tierf)
+                {
+                    statPair.tier = "F";
+                }
+            }
+        }
+
+        public double CalculateStandardDeviation(List<StatPair> stats)
+        {
+            var DataToCalculate = stats.Select(u => u.statTotal).ToList();
+
+            int count = DataToCalculate.Count;
+
+
+
+            double average = DataToCalculate.Average();
+            double sum = DataToCalculate.Sum(d => Math.Pow(d - average, 2));
+            double deviation = Math.Sqrt(sum / (count - 1));
+
+            return deviation;
+        }
+
+        public void CalculateStrikerQuickTiers()
+        {
+            List<FutPlayers> strikers = db.FutPlayers.Where(u => u.position == "ST" || u.position == "CF" || u.position == "LF" || u.position == "RF").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var striker in strikers)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = striker,
+                    statTotal = r.CalculateRole(striker, r.StrikerQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+        }
+
+        public void CalculateStrikerStrongTiers()
+        {
+            List<FutPlayers> strikers = db.FutPlayers.Where(u => u.position == "ST" || u.position == "CF" || u.position == "LF" || u.position == "RF").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var striker in strikers)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = striker,
+                    statTotal = r.CalculateRole(striker, r.StrikerStrong)
+                });
+            }
+
+            CalculateTiers(statPairs);
+        }
+
+        public void CalculateStrikerSkilledTiers()
+        {
+            List<FutPlayers> strikers = db.FutPlayers.Where(u => u.position == "ST" || u.position == "CF" || u.position == "LF" || u.position == "RF").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var striker in strikers)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = striker,
+                    statTotal = r.CalculateRole(striker, r.StrikerSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+        }
+
+        public void CalculateWingerQuickTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "LW" || u.position == "RW" || u.position == "LM" || u.position == "RM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.WingerQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+        }
+
+        public void CalculateTiers(List<StatPair> statPairs)
+        {
+            statPairs = statPairs.OrderByDescending(u => u.statTotal).ToList();
+
+            var standardDeviation = CalculateStandardDeviation(statPairs);
+
+            var avg = statPairs.Select(u => u.statTotal).Average();
+
+            CalculateTier(statPairs);
+
+            var tiera = statPairs.Where(u => u.tier == "A").ToList();
+            var tierb = statPairs.Where(u => u.tier == "B").ToList();
+            var tierc = statPairs.Where(u => u.tier == "C").ToList();
+            var tierd = statPairs.Where(u => u.tier == "D").ToList();
+            var tiere = statPairs.Where(u => u.tier == "E").ToList();
+            var tierf = statPairs.Where(u => u.tier == "F").ToList();
         }
     }
 

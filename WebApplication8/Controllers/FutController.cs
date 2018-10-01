@@ -20,12 +20,12 @@ namespace WebApplication8.Controllers
         public int pageCount = 1;
         public bool lastPage = false;
         List<FutPlayers> futPlayers = new List<FutPlayers>();
+        private List<Team> leagueHighs = new List<Team>();
         public IActionResult Index()
         {
             //GetLinks();
             //GetPlayerData();
-            GetPrices();
-            
+            //GetPrices();
             //CalculateStrikerQuickTiers();
             //CalculateStrikerStrongTiers();
             //CalculateStrikerSkilledTiers();
@@ -34,99 +34,89 @@ namespace WebApplication8.Controllers
             return View();
         }
 
-        public ActionResult StrikerQuick()
+        public ActionResult FutStats(string type)
         {
-            return View(CalculateStrikerQuickTiers());
-        }
-
-        public ActionResult StrikerStrong()
-        {
-            return View(CalculateStrikerStrongTiers());
-        }
-
-        public ActionResult StrikerSkilled()
-        {
-            return View(CalculateStrikerSkilledTiers());
-        }
-
-        public ActionResult WingerQuick()
-        {
-            return View(CalculateWingerQuickTiers());
-        }
-
-        public ActionResult WingerSkilled()
-        {
-            return View(CalculateWingerSkilledTiers());
-        }
-
-        public ActionResult AttackingMidQuick()
-        {
-            return View(CalculateAttackingMidQuickTiers());
-        }
-
-        public ActionResult AttackingMidSkilled()
-        {
-            return View(CalculateAttackingMidSkilledTiers());
-        }
-
-        public ActionResult MidQuick()
-        {
-            return View(CalculateMidQuickTiers());
-        }
-
-        public ActionResult MidSkilled()
-        {
-            return View(CalculateMidSkilledTiers());
-        }
-
-        public ActionResult MidDefender()
-        {
-            return View(CalculateMidDefenderTiers());
-        }
-
-        public ActionResult DefendingMidQuick()
-        {
-            return View(CalculateDefendingMidQuickTiers());
-        }
-
-        public ActionResult DefendingMidSkilled()
-        {
-            return View(CalculateDefendingMidSkilledTiers());
-        }
-
-        public ActionResult DefendingMidDefender()
-        {
-            return View(CalculateDefendingMidDefenderTiers());
-        }
-
-        public ActionResult BackQuick()
-        {
-            return View(CalculateBackQuickTiers());
-        }
-
-        public ActionResult BackSkilled()
-        {
-            return View(CalculateBackSkilledTiers());
-        }
-
-        public ActionResult BackStrong()
-        {
-            return View(CalculateBackStrongTiers());
-        }
-
-        public ActionResult DefenderQuick()
-        {
-            return View(CalculateDefenderQuickTiers());
-        }
-
-        public ActionResult DefenderSkilled()
-        {
-            return View(CalculateDefenderSkilledTiers());
-        }
-
-        public ActionResult DefenderStrong()
-        {
-            return View(CalculateDefenderStrongTiers());
+            ViewBag.Type = type;
+            if (type == "StrikerQuick")
+            {
+                return View(CalculateStrikerQuickTiers());
+            }
+            else if (type == "StrikerStrong")
+            {
+                return View(CalculateStrikerStrongTiers());
+            }
+            else if (type == "StrikerSkilled")
+            {
+                return View(CalculateStrikerSkilledTiers());
+            }
+            else if (type == "WingerQuick")
+            {
+                return View(CalculateWingerQuickTiers());
+            }
+            else if (type == "WingerSkilled")
+            {
+                return View(CalculateWingerSkilledTiers());
+            }
+            else if (type == "AttackingMidQuick")
+            {
+                return View(CalculateAttackingMidQuickTiers());
+            }
+            else if (type == "AttackingMidSkilled")
+            {
+                return View(CalculateAttackingMidSkilledTiers());
+            }
+            else if (type == "MidQuick")
+            {
+                return View(CalculateMidQuickTiers());
+            }
+            else if (type == "MidSkilled")
+            {
+                return View(CalculateMidSkilledTiers());
+            }
+            else if (type == "MidDefender")
+            {
+                return View(CalculateMidDefenderTiers());
+            }
+            else if (type == "DefendingMidQuick")
+            {
+                return View(CalculateDefendingMidQuickTiers());
+            }
+            else if (type == "DefendingMidSkilled")
+            {
+                return View(CalculateDefendingMidSkilledTiers());
+            }
+            else if (type == "DefendingMidDefender")
+            {
+                return View(CalculateDefendingMidDefenderTiers());
+            }
+            else if (type == "BackQuick")
+            {
+                return View(CalculateBackQuickTiers());
+            }
+            else if (type == "BackSkilled")
+            {
+                return View(CalculateBackSkilledTiers());
+            }
+            else if (type == "BackStrong")
+            {
+                return View(CalculateBackStrongTiers());
+            }
+            else if (type == "DefenderQuick")
+            {
+                return View(CalculateDefenderQuickTiers());
+            }
+            else if (type == "DefenderSkilled")
+            {
+                return View(CalculateDefenderSkilledTiers());
+            }
+            else if (type == "DefenderStrong")
+            {
+                return View(CalculateDefenderStrongTiers());
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [Authorize]
@@ -359,6 +349,11 @@ namespace WebApplication8.Controllers
                 {
                     statPair.tier = "12";
                 }
+            }
+
+            foreach (var statPair in statPairs)
+            {
+                statPair.player.ps4cost = GetCost(statPair.player.ps4cost).ToString();
             }
         }
 
@@ -812,6 +807,109 @@ namespace WebApplication8.Controllers
             var tiere = statPairs.Where(u => u.tier == "E").ToList();
             var tierf = statPairs.Where(u => u.tier == "F").ToList();
             var tierg = statPairs.Where(u => u.tier == "G").ToList();
+        }
+
+        public void GetBestValue(string league, int totalCost)
+        {
+            int combinations = 1000;
+            List<Team> teams = new List<Team>();
+            for (int i = 0; i < combinations; i++)
+            {
+                var pool = db.FutPlayers.Where(u => u.league == league && u.ps4cost != "0" && u.overall >= 75).ToList();
+                Random r = new Random();
+                var st = pool.Where(u => u.position == "ST" || u.position == "CF").ElementAt(r.Next(1, pool.Where(u => u.position == "ST" || u.position == "CF").Count()));
+                var lw = pool.Where(u => u.position == "LW" || u.position == "LF" || u.position == "LM").ElementAt(r.Next(1, pool.Where(u => u.position == "LW" || u.position == "LF" || u.position == "LM").Count()));
+                var rw = pool.Where(u => u.position == "RW" || u.position == "RF" || u.position == "RM").ElementAt(r.Next(1, pool.Where(u => u.position == "RW" || u.position == "RF" || u.position == "RM").Count()));
+                var cm = pool.Where(u => u.position == "CM" || u.position == "CDM" || u.position == "CAM").ElementAt(r.Next(1, pool.Where(u => u.position == "CM" || u.position == "CDM" || u.position == "CAM").Count()));
+                var cm2 = pool.Where(u => u.position == "CM" || u.position == "CDM" || u.position == "CAM").ElementAt(r.Next(1, pool.Where(u => u.position == "CM" || u.position == "CDM" || u.position == "CAM").Count()));
+                var cdm = pool.Where(u => u.position == "CM" || u.position == "CDM").ElementAt(r.Next(1, pool.Where(u => u.position == "CM" || u.position == "CDM").Count()));
+                var lb = pool.Where(u => u.position == "LB" || u.position == "LWB").ElementAt(r.Next(1, pool.Where(u => u.position == "LB" || u.position == "LWB").Count()));
+                var cb = pool.Where(u => u.position == "CB").ElementAt(r.Next(1, pool.Where(u => u.position == "CB").Count()));
+                var cb2 = pool.Where(u => u.position == "CB").ElementAt(r.Next(1, pool.Where(u => u.position == "CB").Count()));
+                var rb = pool.Where(u => u.position == "RB" || u.position == "RWB").ElementAt(r.Next(1, pool.Where(u => u.position == "RB" || u.position == "RWB").Count()));
+
+                Team t = new Team();
+                t.players = new List<FutPlayers>();
+                t.players.Add(st);
+                t.players.Add(lw);
+                t.players.Add(rw);
+                t.players.Add(cm);
+                t.players.Add(cm2);
+                t.players.Add(cdm);
+                t.players.Add(lb);
+                t.players.Add(cb);
+                t.players.Add(cb2);
+                t.players.Add(rb);
+
+                int cost = GetCost(st.ps4cost);
+                cost += GetCost(lw.ps4cost);
+                cost += GetCost(rw.ps4cost);
+                cost += GetCost(cm.ps4cost);
+                cost += GetCost(cm2.ps4cost);
+                cost += GetCost(cdm.ps4cost);
+                cost += GetCost(lb.ps4cost);
+                cost += GetCost(cb.ps4cost);
+                cost += GetCost(cb.ps4cost);
+                cost += GetCost(rb.ps4cost);
+                t.cost = cost;
+
+                Roles role = new Roles();
+
+                double rating = role.CalculateRole(st, role.StrikerQuick);
+                rating += role.CalculateRole(lw, role.WingerQuick);
+                rating += role.CalculateRole(rw, role.WingerQuick);
+                rating += role.CalculateRole(cm, role.MidSkilled);
+                rating += role.CalculateRole(cm2, role.MidSkilled);
+                rating += role.CalculateRole(cdm, role.DefendingMidDefender);
+                rating += role.CalculateRole(lb, role.BackQuick);
+                rating += role.CalculateRole(cb, role.DefenderStrong);
+                rating += role.CalculateRole(cb2, role.DefenderStrong);
+                rating += role.CalculateRole(rb, role.BackQuick);
+                t.rating = rating;
+
+                if (cost < totalCost)
+                {
+                    teams.Add(t);
+                }
+                
+            }
+
+            teams = teams.OrderByDescending(u => u.rating).ToList();
+
+            var bestTeam = teams.FirstOrDefault();
+            leagueHighs.Add(bestTeam);
+        }
+
+        public class Team
+        {
+            public List<FutPlayers> players { get; set; }
+            public int cost { get; set; }
+            public double rating { get; set; }
+        }
+
+        public int GetCost(string cost)
+        {
+            int newCost;
+            if (cost == null)
+            {
+                return 1000000000;
+            }
+            if (cost.Contains("M"))
+            {
+                cost = cost.Replace("M", "");
+                newCost = Convert.ToInt32(Convert.ToDouble(cost) * 1000000);
+            }
+            else if (cost.Contains("K"))
+            {
+                cost = cost.Replace("K", "");
+                newCost = Convert.ToInt32(Convert.ToDouble(cost) * 1000);
+            }
+            else
+            {
+                newCost = Convert.ToInt32(cost);
+            }
+
+            return newCost;
         }
     }
 

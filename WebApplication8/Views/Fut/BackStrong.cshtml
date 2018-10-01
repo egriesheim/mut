@@ -1,0 +1,55 @@
+﻿@model IEnumerable<WebApplication8.Models.StatPair>
+
+@{
+    ViewData["Title"] = "BackStrong";
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+<h2>StrikerQuick</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.player.name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.player.league)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.statTotal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tier)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            @{
+                var url = "http://www.futbin.com" + item.player.href;
+            }
+            <td>
+                <a target="_blank" href="@url">@item.player.name</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.player.league)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.statTotal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.tier)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script>
+    $(".table").DataTable();
+</script>

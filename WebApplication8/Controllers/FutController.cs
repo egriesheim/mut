@@ -16,6 +16,7 @@ namespace WebApplication8.Controllers
     {
         private MutContext db = new MutContext();
         private string url = "https://www.futbin.com/players?page=";
+        public List<FutPlayers> existingPlayers = new List<FutPlayers>();
         public int pageCount = 1;
         public bool lastPage = false;
         List<FutPlayers> futPlayers = new List<FutPlayers>();
@@ -23,18 +24,129 @@ namespace WebApplication8.Controllers
         {
             //GetLinks();
             //GetPlayerData();
+            GetPrices();
             
             //CalculateStrikerQuickTiers();
             //CalculateStrikerStrongTiers();
             //CalculateStrikerSkilledTiers();
-            CalculateWingerQuickTiers();
+            //CalculateWingerQuickTiers();
 
             return View();
+        }
+
+        public ActionResult StrikerQuick()
+        {
+            return View(CalculateStrikerQuickTiers());
+        }
+
+        public ActionResult StrikerStrong()
+        {
+            return View(CalculateStrikerStrongTiers());
+        }
+
+        public ActionResult StrikerSkilled()
+        {
+            return View(CalculateStrikerSkilledTiers());
+        }
+
+        public ActionResult WingerQuick()
+        {
+            return View(CalculateWingerQuickTiers());
+        }
+
+        public ActionResult WingerSkilled()
+        {
+            return View(CalculateWingerSkilledTiers());
+        }
+
+        public ActionResult AttackingMidQuick()
+        {
+            return View(CalculateAttackingMidQuickTiers());
+        }
+
+        public ActionResult AttackingMidSkilled()
+        {
+            return View(CalculateAttackingMidSkilledTiers());
+        }
+
+        public ActionResult MidQuick()
+        {
+            return View(CalculateMidQuickTiers());
+        }
+
+        public ActionResult MidSkilled()
+        {
+            return View(CalculateMidSkilledTiers());
+        }
+
+        public ActionResult MidDefender()
+        {
+            return View(CalculateMidDefenderTiers());
+        }
+
+        public ActionResult DefendingMidQuick()
+        {
+            return View(CalculateDefendingMidQuickTiers());
+        }
+
+        public ActionResult DefendingMidSkilled()
+        {
+            return View(CalculateDefendingMidSkilledTiers());
+        }
+
+        public ActionResult DefendingMidDefender()
+        {
+            return View(CalculateDefendingMidDefenderTiers());
+        }
+
+        public ActionResult BackQuick()
+        {
+            return View(CalculateBackQuickTiers());
+        }
+
+        public ActionResult BackSkilled()
+        {
+            return View(CalculateBackSkilledTiers());
+        }
+
+        public ActionResult BackStrong()
+        {
+            return View(CalculateBackStrongTiers());
+        }
+
+        public ActionResult DefenderQuick()
+        {
+            return View(CalculateDefenderQuickTiers());
+        }
+
+        public ActionResult DefenderSkilled()
+        {
+            return View(CalculateDefenderSkilledTiers());
+        }
+
+        public ActionResult DefenderStrong()
+        {
+            return View(CalculateDefenderStrongTiers());
         }
 
         [Authorize]
         public void GetLinks()
         {
+            existingPlayers = db.FutPlayers.ToList();
+            while (!lastPage)
+            {
+                ParseURL(url + pageCount);
+                pageCount++;
+            }
+
+            db.FutPlayers.AddRange(futPlayers);
+            db.SaveChanges();
+        }
+
+        [Authorize]
+        public void GetPrices()
+        {
+            existingPlayers = db.FutPlayers.ToList();
             while (!lastPage)
             {
                 ParseURL(url + pageCount);
@@ -61,43 +173,49 @@ namespace WebApplication8.Controllers
             foreach (var i in test)
             {
                 string href = i.Attributes[1].Value;
-                futPlayers.Add(new FutPlayers
+                if(existingPlayers.Any(u => u.href == href))
                 {
-                    href = href
-                });
+                    var player = existingPlayers.FirstOrDefault(u => u.href == href);
+                    player.ps4cost = i.SelectSingleNode("td[5]/span[1]").InnerText;
+                    db.Entry(player).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                
             }
-            Debug.WriteLine(url);
+            
         }
 
         [Authorize]
-        public void GetPlayerData()
+        public async void GetPlayerData()
         {
-            var toUpdate = db.FutPlayers.Where(u => u.name == null).ToList();
+            var toUpdate = db.FutPlayers.Where(u => u.ps4cost == null).OrderByDescending(u => u.overall).ToList();
+            List<Task> TaskList = new List<Task>();
             foreach (var player in toUpdate)
             {
-                ParsePlayerPage(player);
+                var LastTask = ParsePlayerPage(player);
+                TaskList.Add(LastTask);
             }
+
+            await Task.WhenAll(TaskList.ToArray());
         }
 
-        public void ParsePlayerPage(FutPlayers player)
+        public async Task ParsePlayerPage(FutPlayers player)
         {
             try
             {
                 var url = "https://www.futbin.com" + player.href;
                 var web = new HtmlWeb();
                 var doc = web.Load(url);
-
-                player.name = doc.DocumentNode.SelectSingleNode("//*[@id=\"Player-card\"]/div[2]").InnerText;
+                /*
+                player.name = doc.DocumentNode.SelectSingleNode("//div[@id='Player-card']//div[@class='pcdisplay-name']").InnerText;
                 player.overall =
-                    Convert.ToInt32(doc.DocumentNode.SelectSingleNode("//*[@id=\"Player-card\"]/div[1]").InnerText);
-                player.position = doc.DocumentNode.SelectSingleNode("//*[@id=\"Player-card\"]/div[3]").InnerText;
-                //var club = doc.DocumentNode.SelectNodes("//*[@id=\"info_content\"]/table/tbody/tr");
-                //player.club = doc.DocumentNode.SelectSingleNode("//*[@id=\"info_content\"]/table/tbody/tr[2]/td/a")
-                //    .InnerText;
-                //player.nation = doc.DocumentNode.SelectSingleNode("//*[@id=\"info_content\"]/table/tbody/tr[3]/td/a")
-                //    .InnerText;
-                //player.league = doc.DocumentNode.SelectSingleNode("//*[@id=\"info_content\"]/table/tbody/tr[4]/td/a")
-                //    .InnerText;
+                    Convert.ToInt32(doc.DocumentNode.SelectSingleNode("//div[@id='Player-card']//div[@class='pcdisplay-rat']").InnerText);
+                player.position = doc.DocumentNode.SelectSingleNode("//div[@id='Player-card']//div[@class='pcdisplay-pos']").InnerText;
+                
+                player.club = doc.DocumentNode.SelectSingleNode("//div[@class='container p-xs-0']//ul[contains(@class,'list-unstyled list-inline')]//li[2]//a").InnerText;
+                player.nation = doc.DocumentNode.SelectSingleNode("//div[@class='container p-xs-0']//ul[contains(@class,'list-unstyled list-inline')]//li[1]//a").InnerText;
+                player.league = doc.DocumentNode.SelectSingleNode("//div[@class='container p-xs-0']//ul[contains(@class,'list-unstyled list-inline')]//li[3]//a").InnerText;
+                
                 player.acceleration = Convert.ToInt32(doc.DocumentNode
                     .SelectSingleNode("//*[@id=\"sub-acceleration-val-0\"]/div[3]").InnerText);
                 player.sprintSpeed =
@@ -161,17 +279,16 @@ namespace WebApplication8.Controllers
                 player.aggression =
                     Convert.ToInt32(doc.DocumentNode.SelectSingleNode("//*[@id=\"sub-aggression-val-0\"]/div[3]")
                         .InnerText);
-                //player.ps4cost = doc.DocumentNode.SelectSingleNode("//*[@id=\"ps-lowest-1\"]/text()").InnerText;
-                //player.xboxcost = doc.DocumentNode.SelectSingleNode("//*[@id=\"xbox-lowest-1\"]/text()").InnerText;
-                //player.pccost = doc.DocumentNode.SelectSingleNode("//*[@id=\"pc-lowest-1\"]/text()").InnerText;
+                */
 
                 db.Entry(player).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
+            
         }
 
         public void CalculateTier(List<StatPair> statPairs)
@@ -179,38 +296,68 @@ namespace WebApplication8.Controllers
             var standardDeviation = CalculateStandardDeviation(statPairs);
             var avg = statPairs.Select(u => u.statTotal).Average();
 
-            var tiera = avg + 3 * standardDeviation;
-            var tierb = avg + 2 * standardDeviation;
-            var tierc = avg + standardDeviation;
-            var tierd = avg - standardDeviation;
-            var tiere = avg - 2 * standardDeviation;
-            var tierf = avg - 3 * standardDeviation;
+            var tier1 = avg + 3 * standardDeviation;
+            var tier2 = avg + 2.5 * standardDeviation;
+            var tier3 = avg + 2 * standardDeviation;
+            var tier4 = avg + 1.5 * standardDeviation;
+            var tier5 = avg + standardDeviation;
+            var tier6 = avg + 0.5 * standardDeviation;
+            var tier7 = avg - 0.5 * standardDeviation;
+            var tier8 = avg - standardDeviation;
+            var tier9 = avg - 1.5 * standardDeviation;
+            var tier10 = avg - 2 * standardDeviation;
+            var tier11 = avg - 2.5 * standardDeviation;
+            var tier12 = avg - 3 * standardDeviation;
 
             foreach (var statPair in statPairs)
             {
-                if (statPair.statTotal > tiera)
+                if (statPair.statTotal > tier1)
                 {
-                    statPair.tier = "A";
+                    statPair.tier = "1";
                 }
-                else if (statPair.statTotal > tierb)
+                else if (statPair.statTotal > tier2)
                 {
-                    statPair.tier = "B";
+                    statPair.tier = "2";
                 }
-                else if (statPair.statTotal > tierc)
+                else if (statPair.statTotal > tier3)
                 {
-                    statPair.tier = "C";
+                    statPair.tier = "3";
                 }
-                else if (statPair.statTotal > tierd)
+                else if (statPair.statTotal > tier4)
                 {
-                    statPair.tier = "D";
+                    statPair.tier = "4";
                 }
-                else if (statPair.statTotal > tiere)
+                else if (statPair.statTotal > tier5)
                 {
-                    statPair.tier = "E";
+                    statPair.tier = "5";
                 }
-                else if (statPair.statTotal > tierf)
+                else if (statPair.statTotal > tier6)
                 {
-                    statPair.tier = "F";
+                    statPair.tier = "6";
+                }
+                else if (statPair.statTotal > tier7)
+                {
+                    statPair.tier = "7";
+                }
+                else if (statPair.statTotal > tier8)
+                {
+                    statPair.tier = "8";
+                }
+                else if (statPair.statTotal > tier9)
+                {
+                    statPair.tier = "9";
+                }
+                else if (statPair.statTotal > tier10)
+                {
+                    statPair.tier = "10";
+                }
+                else if (statPair.statTotal > tier11)
+                {
+                    statPair.tier = "11";
+                }
+                else
+                {
+                    statPair.tier = "12";
                 }
             }
         }
@@ -230,7 +377,7 @@ namespace WebApplication8.Controllers
             return deviation;
         }
 
-        public void CalculateStrikerQuickTiers()
+        public List<StatPair> CalculateStrikerQuickTiers()
         {
             List<FutPlayers> strikers = db.FutPlayers.Where(u => u.position == "ST" || u.position == "CF" || u.position == "LF" || u.position == "RF").ToList();
 
@@ -248,9 +395,11 @@ namespace WebApplication8.Controllers
             }
 
             CalculateTiers(statPairs);
+
+            return statPairs;
         }
 
-        public void CalculateStrikerStrongTiers()
+        public List<StatPair> CalculateStrikerStrongTiers()
         {
             List<FutPlayers> strikers = db.FutPlayers.Where(u => u.position == "ST" || u.position == "CF" || u.position == "LF" || u.position == "RF").ToList();
 
@@ -268,9 +417,11 @@ namespace WebApplication8.Controllers
             }
 
             CalculateTiers(statPairs);
+
+            return statPairs;
         }
 
-        public void CalculateStrikerSkilledTiers()
+        public List<StatPair> CalculateStrikerSkilledTiers()
         {
             List<FutPlayers> strikers = db.FutPlayers.Where(u => u.position == "ST" || u.position == "CF" || u.position == "LF" || u.position == "RF").ToList();
 
@@ -288,9 +439,11 @@ namespace WebApplication8.Controllers
             }
 
             CalculateTiers(statPairs);
+
+            return statPairs;
         }
 
-        public void CalculateWingerQuickTiers()
+        public List<StatPair> CalculateWingerQuickTiers()
         {
             List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "LW" || u.position == "RW" || u.position == "LM" || u.position == "RM").ToList();
 
@@ -308,6 +461,338 @@ namespace WebApplication8.Controllers
             }
 
             CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateWingerSkilledTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "LW" || u.position == "RW" || u.position == "LM" || u.position == "RM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.WingerSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateAttackingMidQuickTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CAM" || u.position == "CM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.AttackingMidQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateAttackingMidSkilledTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CAM" || u.position == "CM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.AttackingMidSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateMidQuickTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CM" || u.position == "CAM" || u.position == "CDM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.MidQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateMidSkilledTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CM" || u.position == "CAM" || u.position == "CDM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.MidSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateMidDefenderTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CM" || u.position == "CAM" || u.position == "CDM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.MidDefender)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateDefendingMidQuickTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CDM" || u.position == "CM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.DefendingMidQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateDefendingMidSkilledTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CDM" || u.position == "CM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.DefendingMidSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateDefendingMidDefenderTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CDM" || u.position == "CM").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.DefendingMidDefender)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateBackQuickTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "LB" || u.position == "LWB" || u.position == "RB" || u.position == "RWB").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.BackQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateBackSkilledTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "LB" || u.position == "LWB" || u.position == "RB" || u.position == "RWB").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.BackSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateBackStrongTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "LB" || u.position == "LWB" || u.position == "RB" || u.position == "RWB").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.BackStrong)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateDefenderQuickTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CB").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.DefenderQuick)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateDefenderSkilledTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CB").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.DefenderSkilled)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
+        }
+
+        public List<StatPair> CalculateDefenderStrongTiers()
+        {
+            List<FutPlayers> players = db.FutPlayers.Where(u => u.position == "CB").ToList();
+
+            List<StatPair> statPairs = new List<StatPair>();
+
+            Roles r = new Roles();
+
+            foreach (var player in players)
+            {
+                statPairs.Add(new StatPair
+                {
+                    player = player,
+                    statTotal = r.CalculateRole(player, r.DefenderStrong)
+                });
+            }
+
+            CalculateTiers(statPairs);
+
+            return statPairs;
         }
 
         public void CalculateTiers(List<StatPair> statPairs)
@@ -326,6 +811,7 @@ namespace WebApplication8.Controllers
             var tierd = statPairs.Where(u => u.tier == "D").ToList();
             var tiere = statPairs.Where(u => u.tier == "E").ToList();
             var tierf = statPairs.Where(u => u.tier == "F").ToList();
+            var tierg = statPairs.Where(u => u.tier == "G").ToList();
         }
     }
 

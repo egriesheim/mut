@@ -9,7 +9,7 @@ namespace WebApplication8.Data
     public class MutContext : ApplicationDbContext
     {
         public static string ConnectionString =
-            "Server=tcp:mutdb.database.windows.net,1433;Initial Catalog=MUT;Persist Security Info=False;User ID=mutadmin;Password=Dunder#7!?;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            "Server=localhost\\SQLEXPRESS;Initial Catalog=Fut;Integrated Security=SSPI;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
 
 
         public MutContext()
@@ -27,11 +27,11 @@ namespace WebApplication8.Data
             optionsBuilder.UseSqlServer(ConnectionString);
         }
 
-        public virtual DbSet<Link> Links { get; set; }
-        public virtual DbSet<Players> Players { get; set; }
-        public virtual DbSet<Diamonds> Diamonds { get; set; }
-        public virtual DbSet<CoinsBack> CoinsBack { get; set; }
-        public virtual DbSet<Owned> Owned { get; set; }
+        //public virtual DbSet<Link> Links { get; set; }
+        //public virtual DbSet<Players> Players { get; set; }
+        //public virtual DbSet<Diamonds> Diamonds { get; set; }
+        //public virtual DbSet<CoinsBack> CoinsBack { get; set; }
+        //public virtual DbSet<Owned> Owned { get; set; }
         public virtual DbSet<FutPlayers> FutPlayers { get; set; }
     }
 

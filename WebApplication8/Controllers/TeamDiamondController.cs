@@ -27,6 +27,7 @@ namespace WebApplication8.Controllers
         
         public IActionResult Index()
         {
+            /*
             List<TeamDiamondSet> teamDiamondSet = new List<TeamDiamondSet>();
             var teams = db.Diamonds.Select(u => u.team).Distinct();
             var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -39,11 +40,14 @@ namespace WebApplication8.Controllers
 
             var list = teamDiamondSet.OrderByDescending(u => u.profit).ToList();
             return View(list);
+            */
+            return View();
         }
 
         [Authorize]
         public IActionResult Modify(string team)
         {
+            /*
             var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var owned = db.Owned.FirstOrDefault(u => u.team == team && u.userId == uId);
             if (owned != null)
@@ -59,6 +63,8 @@ namespace WebApplication8.Controllers
             ViewBag.Team = team;
             var players = db.Diamonds.Where(u => u.team == team || (team.Contains(u.column_10) && u.column_10 != "")).ToList();
             return View(players);
+            */
+            return View();
         }
 
         public IActionResult UpdatePlayerData()
@@ -73,6 +79,7 @@ namespace WebApplication8.Controllers
 
         public void GeneratePlayerList()
         {
+            /*
             var allLinks = db.Links.ToList();
             db.Links.RemoveRange(allLinks);
 
@@ -85,11 +92,13 @@ namespace WebApplication8.Controllers
 
             db.Links.AddRange(urlList);
             db.SaveChanges();
+            */
         }
 
 
         public void GetPlayers()
         {
+            /*
             var allPlayers = db.Players.ToList();
             db.Players.RemoveRange(allPlayers);
 
@@ -99,6 +108,7 @@ namespace WebApplication8.Controllers
             {
                 GetPlayerData(player.url);
             }
+            */
         }
 
         [Authorize]
@@ -128,6 +138,7 @@ namespace WebApplication8.Controllers
         [HttpPost]
         public JsonResult AddOwned(string Team, string[] Owned)
         {
+            /*
             var uId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (db.Owned.Any(u => u.userId == uId && u.team == Team))
             {
@@ -157,13 +168,14 @@ namespace WebApplication8.Controllers
                     return Json("'Success':'false'");
                 }
             }
-            
+            */
+            return Json("Success");
         }
 
         [HttpPost]
         public JsonResult UpdateOwned(string[] owned, string id)
         {
-
+            /*
             Owned o = db.Owned.Find(Convert.ToInt32(id));
 
             o.owned = String.Join(",", owned);
@@ -186,6 +198,9 @@ namespace WebApplication8.Controllers
             {
                 return Json("'Success':'false'");
             }
+            */
+
+            return Json("Success");
         }
 
         public void GetPlayerData(string href)
@@ -215,7 +230,7 @@ namespace WebApplication8.Controllers
                     median = ConvertMedian(median),
                     programName = programName
                 };
-
+                /*
                 db.Players.Add(player);
                 db.SaveChanges();
 
@@ -227,7 +242,7 @@ namespace WebApplication8.Controllers
                     db.Entry(diamond).State = EntityState.Modified;
                     db.SaveChanges();
                 }
-
+                */
 
             }
             catch

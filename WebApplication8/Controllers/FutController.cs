@@ -15,7 +15,7 @@ namespace WebApplication8.Controllers
     public class FutController : Controller
     {
         private MutContext db = new MutContext();
-        private string url = "https://www.futbin.com/players?page=";
+        private string url = "https://www.futbin.com/players?version=gold_nr&page=";
         public List<FutPlayers> existingPlayers = new List<FutPlayers>();
         public int pageCount = 1;
         public bool lastPage = false;
@@ -23,15 +23,62 @@ namespace WebApplication8.Controllers
         private List<Team> leagueHighs = new List<Team>();
         public IActionResult Index()
         {
-            //GetLinks();
+            
+            GetLinks();
             //GetPlayerData();
             //GetPrices();
+            
+            
+            //var values = GetClubValues();
+
             //CalculateStrikerQuickTiers();
             //CalculateStrikerStrongTiers();
             //CalculateStrikerSkilledTiers();
             //CalculateWingerQuickTiers();
 
             return View();
+        }
+
+        public class ClubValues
+        {
+            public string clubName { get; set; }
+            public double averageCost { get; set; }
+        }
+
+        public List<ClubValues> GetClubValues()
+        {
+            List<ClubValues> clubValues = new List<ClubValues>();
+            var players = db.FutPlayers.ToList();
+            var clubs = players.Select(u => u.club).Distinct().ToList();
+            foreach (var club in clubs)
+            {
+                var costs = players.Where(u => u.club == club).Select(u => u.ps4cost).ToList();
+                if(costs.Count < 5)
+                {
+                    continue;
+                }
+                var sum = 0;
+                var convertedCosts = new List<int>();
+                foreach (var cost in costs)
+                {
+                    convertedCosts.Add(GetCost(cost));
+                }
+
+                convertedCosts = convertedCosts.OrderBy(p => p).Take(3).ToList();
+
+                sum = convertedCosts.Sum() / 3;
+
+
+                clubValues.Add(new ClubValues
+                {
+                    clubName = club,
+                    averageCost = sum
+                });
+            }
+
+            clubValues = clubValues.OrderByDescending(u => u.averageCost).ToList();
+
+            return clubValues;
         }
 
         public ActionResult FutStats(string type)
@@ -170,7 +217,17 @@ namespace WebApplication8.Controllers
                     db.Entry(player).State = EntityState.Modified;
                     db.SaveChanges();
                 }
-                
+                else
+                {
+                    var player = new FutPlayers
+                    {
+                        href = href,
+                        ps4cost = i.SelectSingleNode("td[5]/span[1]").InnerText
+                    };
+
+                    db.FutPlayers.Add(player);
+                    db.SaveChanges();
+                }
             }
             
         }
@@ -178,7 +235,7 @@ namespace WebApplication8.Controllers
         [Authorize]
         public async void GetPlayerData()
         {
-            var toUpdate = db.FutPlayers.Where(u => u.ps4cost == null).OrderByDescending(u => u.overall).ToList();
+            var toUpdate = db.FutPlayers.Where(u => u.name == null).ToList();
             List<Task> TaskList = new List<Task>();
             foreach (var player in toUpdate)
             {
@@ -196,7 +253,7 @@ namespace WebApplication8.Controllers
                 var url = "https://www.futbin.com" + player.href;
                 var web = new HtmlWeb();
                 var doc = web.Load(url);
-                /*
+                
                 player.name = doc.DocumentNode.SelectSingleNode("//div[@id='Player-card']//div[@class='pcdisplay-name']").InnerText;
                 player.overall =
                     Convert.ToInt32(doc.DocumentNode.SelectSingleNode("//div[@id='Player-card']//div[@class='pcdisplay-rat']").InnerText);
@@ -269,7 +326,7 @@ namespace WebApplication8.Controllers
                 player.aggression =
                     Convert.ToInt32(doc.DocumentNode.SelectSingleNode("//*[@id=\"sub-aggression-val-0\"]/div[3]")
                         .InnerText);
-                */
+                
 
                 db.Entry(player).State = EntityState.Modified;
                 await db.SaveChangesAsync();

@@ -12,7 +12,8 @@ namespace WebApplication8.Controllers
     {
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "TeamDiamond");
+            //return RedirectToAction("Index", "TeamDiamond");
+            return View();
         }
 
         public IActionResult About()

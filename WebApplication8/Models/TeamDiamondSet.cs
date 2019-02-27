@@ -25,6 +25,7 @@ namespace WebApplication8.Models
 
         public TeamDiamondSet(string t, string uId)
         {
+            /*
             team = t;
             var ownedItems = db.Owned.FirstOrDefault(u => u.userId == uId && u.team == team);
             if (ownedItems != null)
@@ -52,12 +53,13 @@ namespace WebApplication8.Models
             {
                 ownedCount = 0;
             }
+            */
         }
 
         private List<Diamonds> GetPlayers()
         {
             List<Diamonds> players = new List<Diamonds>();
-            
+            /*
             if (owned != null)
             {
                 players = db.Diamonds.Where(u => u.team == team || (team.Contains(u.column_10) && u.column_10 != "")).ToList();
@@ -71,14 +73,15 @@ namespace WebApplication8.Models
                 players = db.Diamonds.Where(u => u.team == team || (team.Contains(u.column_10) && u.column_10 != "")).ToList();
             }
             
-            
+            */
 
             return players;
         }
 
         public int CoinsBack()
         {
-            return db.CoinsBack.Where(u => u.Team == team).Select(u => u.Coins).FirstOrDefault();
+            //return db.CoinsBack.Where(u => u.Team == team).Select(u => u.Coins).FirstOrDefault();
+            return 0;
         }
 
         
